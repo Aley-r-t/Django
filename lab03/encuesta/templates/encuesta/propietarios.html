@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Propietarios y Vehículos</title>
+</head>
+<body>
+    <h1>Lista de registro</h1>
+    <a href="{% url 'encuesta:autos' %}">Volver al registro</a>
+    <h1>Lista de Propietarios</h1>
+    <a href="{% url 'encuesta:crear_propietario' %}">Crear nuevo propietario</a>
+    {% if propietarios_list %}
+    <table border="1" cellspacing="0" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Número de Apartamento</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Vehículos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for propietario in propietarios_list %}
+            <tr>
+                <td>{{ propietario.nombre }}</td>
+                <td>{{ propietario.numero_apartamento }}</td>
+                <td>{{ propietario.telefono }}</td>
+                <td>{{ propietario.email }}</td>
+                <td>
+                    {% if propietario.vehiculos.exists %}
+                        {% for vehiculo in propietario.vehiculos.all %}
+                            {{ vehiculo.matricula }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        No tiene vehículo
+                    {% endif %}
+                </td>
+                
+                <td>
+                    <a href="{% url 'encuesta:editar_propietario' propietario.id %}">Editar</a>
+                    <a href="{% url 'encuesta:eliminar_propietario' propietario.id %}">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No hay propietarios disponibles.</p>
+    {% endif %}
+    
+    
+
+
+    
+
+
+
+</body>
+</html>

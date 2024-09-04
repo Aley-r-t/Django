@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit</title>
+</head>
+<body>
+
+    <h1>Editar Propietario</h1>
+ {% if propietario.id %}   
+    <form method="post" action="{% url 'encuesta:editar_propietario' propietario.id %}" >
+        {% csrf_token %}
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="{{ propietario.nombre }}" required>
+        </div>
+        <div>
+            <label for="numero_apartamento">Numero de apartamento:</label>
+            <input type="text" id="numero_apartamento" name="numero_apartamento" value="{{ propietario.numero_apartamento }}" required>
+        </div>
+        <div>
+            <label for="telefono">Telefono:</label>
+            <input type="number" id="telefono" name="telefono" value="{{ propietario.telefono }}" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ propietario.email }}" required>
+        </div>
+        <button type="submit">Actualizar</button>
+    </form>
+    <a href="{% url 'encuesta:propietarios' %}">Volver a la lista de propietarios</a>
+{% else %}
+{{ mensaje }}
+<a href="{% url 'encuesta:propietarios' %}">Volver a la lista de propietarios</a>
+{% endif %}
+
+</body>
+</html>
