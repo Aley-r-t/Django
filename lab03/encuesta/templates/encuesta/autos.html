@@ -1,9 +1,17 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'encuesta/css/estilos.css' %}">
+</head>
+
 <h1>Registro de autos and properties</h1>
 <ul>
     <li>
-        <a href="{% url 'encuesta:lista_vehiculos' %}">Registrar entradas for car</a>
+        <a href="{% url 'encuesta:lista_vehiculos' %}">Register car</a>
     </li>
     <li>
         <a href="{% url 'encuesta:propietarios' %}">Añadir propietarios</a>
+    </li>
+    <li>
+        <a href="{% url 'encuesta:lista_registros' %}">Register entry and exit</a>
     </li>    
 </ul>

@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import Opcion, Pregunta, Vehiculo,Propietario, Registro
 from django.contrib import messages
+from django.utils import timezone
 
 
 # Create your views here.
@@ -103,3 +104,27 @@ def eliminar_vehiculo(request, vehiculo_id):
     vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
     vehiculo.delete()
     return render(request, 'encuesta/vehiculo_delete.html', {'mensaje': 'Vehiculo eliminado correctamente'})
+
+# Aqui ponemos el crud de registros
+def registrar_entrada(request):
+    if request.method == 'POST':
+        vehiculo_id = request.POST['vehiculo']
+        vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
+        Registro.objects.create(vehiculo=vehiculo, fecha_hora_entrada=timezone.now())
+        return redirect('encuesta:lista_registros')
+    
+    vehiculos = Vehiculo.objects.all()
+    return render(request, 'encuesta/registrar_entrada.html', {'vehiculos': vehiculos})
+
+def registrar_salida(request, registro_id):
+    registro = get_object_or_404(Registro, pk=registro_id)
+    if request.method == 'POST':
+        registro.fecha_hora_salida = timezone.now()
+        registro.save()
+        return redirect('encuesta:lista_registros')
+    
+    return render(request, 'encuesta/registrar_salida.html', {'registro': registro})
+
+def lista_registros(request):
+    registros = Registro.objects.select_related('vehiculo').all()
+    return render(request, 'encuesta/lista_registros.html', {'registros': registros})

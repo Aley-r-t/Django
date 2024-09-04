@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Registros</title>
+</head>
+<body>
+
+    <h1>Lista de Registros</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Vehículo (Placa)</th>
+                <th>Hora de Entrada</th>
+                <th>Hora de Salida</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in registros %}
+            <tr>
+                <td>{{ registro.vehiculo.matricula }}</td>
+                <td>{{ registro.fecha_hora_entrada }}</td>
+                <td>
+                    {% if registro.fecha_hora_salida %}
+                        {{ registro.fecha_hora_salida }}
+                    {% else %}
+                        <a href="{% url 'encuesta:registrar_salida' registro.id %}">Registrar Salida</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not registro.fecha_hora_salida %}
+                        <a href="{% url 'encuesta:registrar_salida' registro.id %}">Registrar Salida</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'encuesta:registrar_entrada' %}">Registrar Nueva Entrada</a><br>
+    <a href="{% url 'encuesta:autos' %}">Volver a la lista</a>
+
+</body>
+</html>

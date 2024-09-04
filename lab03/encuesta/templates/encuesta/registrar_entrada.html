@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Entrada</title>
+</head>
+<body>
+
+    <h1>Registrar Hora de Entrada</h1>
+    <form method="post" action="{% url 'encuesta:registrar_entrada' %}">
+        {% csrf_token %}
+        <div>
+            <label for="vehiculo">Vehículo (Placa):</label>
+            <select id="vehiculo" name="vehiculo" required>
+                {% for vehiculo in vehiculos %}
+                    <option value="{{ vehiculo.id }}">{{ vehiculo.matricula }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Registrar Entrada</button>
+    </form>
+    <a href="{% url 'encuesta:lista_registros' %}">Ver Registros</a>
+
+</body>
+</html>
