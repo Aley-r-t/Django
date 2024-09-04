@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Vehículos</title>
+</head>
+<body>
+
+    <h1>Lista de Vehículos</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Matrícula</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Propietario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehiculo in vehiculos %}
+            <tr>
+                <td>{{ vehiculo.matricula }}</td>
+                <td>{{ vehiculo.marca }}</td>
+                <td>{{ vehiculo.modelo }}</td>
+                <td>{{ vehiculo.color }}</td>
+                <td>{{ vehiculo.propietario.nombre }}</td>
+                <td>
+                    <a href="{% url 'encuesta:editar_vehiculo' vehiculo.id %}">Editar</a>
+                    <a href="{% url 'encuesta:eliminar_vehiculo' vehiculo.id %}">Eliminar</a>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'encuesta:crear_vehiculo' %}">Crear Nuevo vehiculo</a><br>
+    <a href="{% url 'encuesta:autos' %}">Volver a la lista de propietarios</a>
+
+</body>
+</html>

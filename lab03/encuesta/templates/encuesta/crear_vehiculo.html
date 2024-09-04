@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Vehículo</title>
+</head>
+<body>
+    <h1>Crear Vehículo</h1>
+    <form method="post" action="{% url 'encuesta:crear_vehiculo' %}" >
+        {% csrf_token %}
+        <div>
+            <label for="matricula">Matrícula:</label>
+            <input type="text" id="matricula" name="matricula" required>
+        </div>
+        <div>
+            <label for="marca">Marca:</label>
+            <input type="text" id="marca" name="marca" required>
+        </div>
+        <div>
+            <label for="modelo">Modelo:</label>
+            <input type="text" id="modelo" name="modelo" required>
+        </div>
+        <div>
+            <label for="color">Color:</label>
+            <input type="text" id="color" name="color" required>
+        </div>
+        <div>
+            <label for="propietario">Propietario:</label>
+            <select id="propietario" name="propietario" required>
+                {% for propietario in propietarios %}
+                    <option value="{{ propietario.id }}">{{ propietario.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Crear Vehículo</button>
+    </form>
+    {% if mensaje %}
+    <p>{{ mensaje }}</p>
+    {% endif %}
+    <a href="{% url 'encuesta:lista_vehiculos' %}">Volver a la lista de vehículos</a>
+</body>
+</html>

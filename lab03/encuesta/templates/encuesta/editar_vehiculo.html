@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Vehículo</title>
+</head>
+<body>
+
+    <h1>Editar Vehículo</h1>
+    {% if vehiculo.id %}
+    <form method="post" action="{% url 'encuesta:editar_vehiculo' vehiculo.id %}">
+        {% csrf_token %}
+        <div>
+            <label for="matricula">Matrícula:</label>
+            <input type="text" id="matricula" name="matricula" value="{{ vehiculo.matricula }}" required>
+        </div>
+        <div>
+            <label for="marca">Marca:</label>
+            <input type="text" id="marca" name="marca" value="{{ vehiculo.marca }}" required>
+        </div>
+        <div>
+            <label for="modelo">Modelo:</label>
+            <input type="text" id="modelo" name="modelo" value="{{ vehiculo.modelo }}" required>
+        </div>
+        <div>
+            <label for="color">Color:</label>
+            <input type="text" id="color" name="color" value="{{ vehiculo.color }}" required>
+        </div>
+        <div>
+            <label for="propietario">Propietario:</label>
+            <select id="propietario" name="propietario" required>
+                {% for propietario in propietarios %}
+                    <option value="{{ propietario.id }}" {% if vehiculo.propietario.id == propietario.id %}selected{% endif %}>{{ propietario.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Actualizar Vehículo</button>
+    </form>
+    <a href="{% url 'encuesta:lista_vehiculos' %}">Volver a la lista de vehículos</a>
+    {% else %}
+    {{ mensaje }}
+    <a href="{% url 'encuesta:lista_vehiculos' %}">Volver a la lista de vehículos</a>
+    {% endif %}
+
+</body>
+</html>

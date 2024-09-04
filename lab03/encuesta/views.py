@@ -62,3 +62,44 @@ def eliminar_propietario(request, propietario_id):
     propietario = get_object_or_404(Propietario, pk=propietario_id)
     propietario.delete()
     return render(request, 'encuesta/pro_delete.html', {'mensaje': 'Propietario eliminado correctamente'})
+
+# Aqui ponemos el crud de vehiculos
+def lista_vehiculos(request):
+    vehiculos = Vehiculo.objects.select_related('propietario').all()
+    return render(request, 'encuesta/lista_vehiculos.html', {'vehiculos': vehiculos})
+
+def crear_vehiculo(request):
+    if request.method == 'POST':
+        matricula = request.POST['matricula']
+        marca = request.POST['marca']
+        modelo = request.POST['modelo']
+        color = request.POST['color']
+        propietario_id = request.POST['propietario']
+        propietario = Propietario.objects.get(pk=propietario_id)
+        vehiculo = Vehiculo(matricula=matricula, marca=marca, modelo=modelo, color=color, propietario=propietario)
+        vehiculo.save()
+        return render(request, 'encuesta/crear_vehiculo.html', {'mensaje': 'Vehiculo creado correctamente'})
+    else:
+        propietarios = Propietario.objects.all()
+        return render(request, 'encuesta/crear_vehiculo.html', {'propietarios': propietarios})
+
+def editar_vehiculo(request, vehiculo_id):
+    vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
+    if request.method == 'POST':
+        vehiculo.matricula = request.POST['matricula']
+        vehiculo.marca = request.POST['marca']
+        vehiculo.modelo = request.POST['modelo']
+        vehiculo.color = request.POST['color']
+        propietario_id = request.POST['propietario']
+        propietario = Propietario.objects.get(pk=propietario_id)
+        vehiculo.propietario = propietario
+        vehiculo.save()
+        return render(request, 'encuesta/editar_vehiculo.html', {'mensaje': 'Vehiculo actualizado correctamente'})
+    else:
+        propietarios = Propietario.objects.all()
+        return render(request, 'encuesta/editar_vehiculo.html', {'vehiculo': vehiculo, 'propietarios': propietarios})
+    
+def eliminar_vehiculo(request, vehiculo_id):
+    vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
+    vehiculo.delete()
+    return render(request, 'encuesta/vehiculo_delete.html', {'mensaje': 'Vehiculo eliminado correctamente'})
