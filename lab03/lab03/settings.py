@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'encuesta',
+    'blog',
+    'nombre_de_la_app',
 ]
 
 MIDDLEWARE = [

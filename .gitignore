@@ -1,3 +1,8 @@
 /myvenv
 lab03/lab03/__pycache__
-lab03/encuesta/__pycache__
+lab03/encuesta/__pycache__/*
+lab03/blog/__pycache__/*
+lab03/nombre_de_la_app/__pycache__
+lab03/encuesta/migrations/__pycache__
+lab03/blog/migrations/__pycache__
+lab03/nombre_de_la_app/migrations/__pycache__

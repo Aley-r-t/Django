@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calcular Pago</title>
+</head>
+<body>
+    <h1>Calcular Pago Semanal</h1>
+    <form method="post" action="{% url 'calcular_pago' %}">
+        {% csrf_token %}
+        <label>Nombre del producto</label>
+        <input type="text" name="name_producto" required><br><br>
+        <label>Cantidades vendidas</label>
+        <input type="number" name="cantidad_productos" required><br><br>
+        <label>Precio del producto por unidad</label>
+        <input type="number" name="precio_por_unidad" required><br><br>
+        <button type="submit">Calcular Pago</button>
+    </form>
+</body>
+</html>

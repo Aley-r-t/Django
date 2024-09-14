@@ -71,18 +71,44 @@ def lista_vehiculos(request):
 
 def crear_vehiculo(request):
     if request.method == 'POST':
-        matricula = request.POST['matricula']
+        matricula = request.POST['matricula'].strip().lower()  # Convertir a minúsculas y eliminar espacios en blanco
+
+        # Validar que la matrícula tenga exactamente 7 caracteres
+        if len(matricula) != 7:
+            propietarios = Propietario.objects.all()
+            vehiculos = Vehiculo.objects.all()
+            return render(request, 'encuesta/crear_vehiculo.html', {
+                'propietarios': propietarios,
+                'vehiculos': vehiculos,
+                'mensaje': 'Error: La matrícula debe tener exactamente 7 caracteres.'
+            })
+
+        # Validar que la matrícula sea única en la base de datos
+        if Vehiculo.objects.filter(matricula__iexact=matricula).exists():
+            propietarios = Propietario.objects.all()
+            return render(request, 'encuesta/crear_vehiculo.html', {
+                'propietarios': propietarios,
+                'vehiculos': vehiculos,
+                'mensaje': 'Error: La matrícula ya está registrada en la base de datos.'
+            })
+
+        # Validaciones pasadas, crear el vehículo
         marca = request.POST['marca']
         modelo = request.POST['modelo']
         color = request.POST['color']
         propietario_id = request.POST['propietario']
-        propietario = Propietario.objects.get(pk=propietario_id)
+        vehiculo_id = request.POST['vehiculo']
+        propietario = get_object_or_404(Propietario, pk=propietario_id)
+        vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
+
         vehiculo = Vehiculo(matricula=matricula, marca=marca, modelo=modelo, color=color, propietario=propietario)
         vehiculo.save()
-        return render(request, 'encuesta/crear_vehiculo.html', {'mensaje': 'Vehiculo creado correctamente'})
+        return render(request, 'encuesta/crear_vehiculo.html', {'mensaje': 'Vehículo creado correctamente'})
+
     else:
         propietarios = Propietario.objects.all()
-        return render(request, 'encuesta/crear_vehiculo.html', {'propietarios': propietarios})
+        vehiculos=Vehiculo.objects.all()
+        return render(request, 'encuesta/crear_vehiculo.html', {'propietarios': propietarios,'vehiculos':vehiculos})
 
 def editar_vehiculo(request, vehiculo_id):
     vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
