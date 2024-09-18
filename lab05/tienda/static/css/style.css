@@ -1,0 +1,25 @@
+/* Cambiar el color de fondo del administrador */
+body {
+    background-color: #ffffff;
+    
+}
+
+/* Personalizar los botones de acción */
+button {
+    background-color: #28a745;
+    color: rgb(230, 0, 0);
+    border-radius: 5px;
+}
+
+h1 {
+    color: #000000;
+}
+/* Cambiar la apariencia de las tablas */
+table {
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #000000;
+    padding: 8px;
+}
