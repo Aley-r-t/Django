@@ -13,5 +13,9 @@ lab05/tienda/__pycache__/*
 lab05/tienda/migrations/__pycache__/*
 lab05/lab05/__pycache__/*
 lab05/lab05/migrations/__pycache__/*
+django_crud_api/django_crud_api/__pycache__/*
+django_crud_api/django_crud_api/migrations/__pycache__/*
+django_crud_api/tasks/__pycache__/*
+django_crud_api/tasks/migrations/__pycache__/*
 
 
