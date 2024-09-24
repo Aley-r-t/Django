@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Download</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin: 20px;
+            font-size: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 20px auto;
+            width: 95%;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .T {
+            font-size: 40px;
+            font-weight: bold;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 10px;
+            width: 100%;
+        }
+        .ruc_container {
+            text-align: center;
+            padding: 10px;
+            border-left: 1px solid #000;
+        }
+        .avenida {
+            text-align: center; /* Centrar el texto */
+            margin-top: 5px; /* Espacio entre el título y la dirección */
+        }
+        .table-container {
+            margin: 20px auto;
+            width: 80%;
+            background-color: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .gg{
+            text-align: center;
+            flex-direction: column;
+            margin-left: 25vw;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>PDF Download</h1>
+        <a href="#" target="_blank">Download PDF</a>
+        <div class="cabecera">
+            <div class="gg">
+                <div class="title"><span class="T">T</span>CONFECCIONES "SAN JORGE"</div>
+                <h6 class="avenida">Calle Real N° 1045 - Huancayo </h6>
+            </div>
+            <div class="ruc_container">
+                <h2>RUC: 20248454753</h2>
+                <h1>FACTURA</h1>
+                <h3>001-{}</h3>
+            </div>
+        </div>
+        <p class="fecha">_________ de ________________ del</p>
+        <div class="per_ruc">
+            <style>
+                .fecha{
+                    margin: auto 25px auto 25px;
+                }
+                .per_ruc{
+                    margin: auto 25px auto 25px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+            </style>
+            <p>Señor(es): _____________________</p>
+            <p>RUC: ________________________</p>
+        </div>
+        <div class="per_ruc">
+            <p>Dirección: ________________________</p>
+            <p>G REMISION: ________________________</p>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Precio Unitario</th>
+                    <th>Valor de Venta</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Camisa</td>
+                    <td>50.00</td>
+                    <td>50.00</td>
+                </tr>
+                <tr>
+                    <td>Son {}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right;">Subtotal:</td>
+                    <td>{}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right;">IGV:</td>
+                    <td>{}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right;">Total S/:</td>
+                    <td>{}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>____________________________________________________</p>
+            <h4>CANCELADO</h4>
+            <p>RUC: {}</p>
+            <p>Serie {} del {} al {}</p>
+            <p>Fecha de emisión: {}</p>
+            <p>NRO AUT: {}</p>
+        </div>
+    </div>
+</body>
+</html>
