@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Empleado, Cliente, Producto, Factura, DetalleDeFactura
+from .models import Empleado, Cliente, Producto, Factura, DetalleDeFactura, Categoria
 from decimal import Decimal
 from datetime import datetime
 import pdfkit
@@ -164,3 +164,17 @@ def render_pdf_view(request, factura_id):
         'total_con_igv': total_con_igv
     })
 '''
+
+def categorias_list(request):
+    categorias = Categoria.objects.all()
+    return render(request, 'ruc/categoria.html', {'categorias': categorias})
+
+def categorias_create(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']
+        descripcion = request.POST['descripcion']
+        categoria = Categoria(nombre=nombre, descripcion=descripcion)
+        categoria.save()
+        return redirect('ruc:categorias_list')
+    else:
+        return redirect('ruc:categorias_list')

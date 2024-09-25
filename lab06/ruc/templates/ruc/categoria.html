@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categoria</title>
+</head>
+<body>
+    <h2>Categoria</h2>
+    <table>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for categoria in categorias %}
+        <tr>
+            <td>{{ categoria.nombre }}</td>
+            <td>{{ categoria.descripcion }}</td>
+            <td><button onclick="enviar();" >Create</button></td>
+            <td><button onclick="borrar()" >Delete</button></td>
+            <td><button>Edit</button></td>
+        </tr>
+        {% endfor %}
+    </table>   
+
+        <div class="formulario">
+
+        </div>
+        
+<script>
+    function enviar(){
+        mostrar();
+    }
+    function mostrar(){
+        var formulario = document.querySelector('.formulario');
+        formulario.innerHTML = `
+            <form action="/ruc/categoria/create" method="POST">
+                <label for="nombre">Nombre</label>
+                <input type="text" name="nombre" id="nombre">
+                <label for="descripcion">Descripcion</label>
+                <input type="text" name="descripcion" id="descripcion">
+                <button type="submit">Guardar</button>
+            </form>
+        `;
+    };
+
+    function borrar(){
+        var formulario = document.querySelector('.formulario');
+        formulario.innerHTML = `
+            <form action="/ruc/categoria/delete" method="POST">
+                <label for="nombre">Nombre</label>
+                <input type="text" name="nombre" id="nombre">
+                <button type="submit">Eliminar</button>
+            </form>
+        `;
+    };
+    
+</script>        
+</body>
+</html>

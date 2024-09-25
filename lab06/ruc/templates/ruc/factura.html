@@ -191,8 +191,17 @@
             <p>Fecha de emisión: {{ fecha_actual }}</p>
             <p>NRO AUT: {{ nro_aut }}</p>
         </div>
+
+
     </div>
+    <button onclick="downloadPDF()" >Imprimir</button>
+
     <a href="{% url 'ruc:form' %}">Go Form</a>
+    <script>
+        function downloadPDF() {
+            window.print();
+        }
+    </script>
 
 </body>
 
