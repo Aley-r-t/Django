@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +12,12 @@
             margin: 0;
             padding: 20px;
         }
+
         h1 {
             text-align: center;
             color: #333;
         }
+
         a {
             display: block;
             text-align: center;
@@ -23,6 +26,7 @@
             color: #007BFF;
             text-decoration: none;
         }
+
         .cabecera {
             display: flex;
             justify-content: space-between;
@@ -35,10 +39,12 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
+
         .T {
             font-size: 40px;
             font-weight: bold;
         }
+
         .title {
             text-align: center;
             font-size: 24px;
@@ -46,15 +52,20 @@
             margin: 0 10px;
             width: 100%;
         }
+
         .ruc_container {
             text-align: center;
             padding: 10px;
             border-left: 1px solid #000;
         }
+
         .avenida {
-            text-align: center; /* Centrar el texto */
-            margin-top: 5px; /* Espacio entre el título y la dirección */
+            text-align: center;
+            /* Centrar el texto */
+            margin-top: 5px;
+            /* Espacio entre el título y la dirección */
         }
+
         .table-container {
             margin: 20px auto;
             width: 80%;
@@ -63,65 +74,83 @@
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #000;
             padding: 10px;
             text-align: center;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .footer {
             margin-top: 20px;
             text-align: center;
         }
+
         .footer p {
             margin: 5px 0;
         }
-        .gg{
+
+        .gg {
             text-align: center;
             flex-direction: column;
             margin-left: 25vw;
         }
     </style>
 </head>
+
 <body>
     <div>
         <h1>PDF Download</h1>
-        <a href="#" target="_blank">Download PDF</a>
+        <form action="{% url 'ruc:render_pdf_view' factura_id=factura.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="factura_id" value="{{ factura.id }}">
+            <button type="submit" target="_blank">Download PDF</button>
+        </form>
+        
         <div class="cabecera">
             <div class="gg">
                 <div class="title"><span class="T">T</span>CONFECCIONES "SAN JORGE"</div>
                 <h6 class="avenida">Calle Real N° 1045 - Huancayo </h6>
             </div>
+
             <div class="ruc_container">
                 <h2>RUC: 20248454753</h2>
                 <h1>FACTURA</h1>
-                <h3>001-{}</h3>
+                <h3>001-{{ nro_aut }}</h3>
             </div>
+
         </div>
-        <p class="fecha">_________ de ________________ del</p>
+        <p class="fecha">Fecha: {{ fecha_actual }}</p>
+        <p style="margin: 12px auto auto 25px;">cajero: {{ factura.empleado.nombre }}</p>
         <div class="per_ruc">
             <style>
-                .fecha{
+                .fecha {
                     margin: auto 25px auto 25px;
                 }
-                .per_ruc{
+
+                .per_ruc {
                     margin: auto 25px auto 25px;
                     display: flex;
                     justify-content: space-between;
                 }
             </style>
-            <p>Señor(es): _____________________</p>
-            <p>RUC: ________________________</p>
+            <p>Señor(es): {{ factura.cliente.nombre }}</p>
+            <p>RUC: {{ factura.cliente.ruc }}</p>
         </div>
         <div class="per_ruc">
-            <p>Dirección: ________________________</p>
-            <p>G REMISION: ________________________</p>
+
+            <p>Dirección: {{ factura.cliente.direccion }}</p>
+            <p>G REMISION: 98343245</p>
         </div>
 
         <div class="table-container">
@@ -132,29 +161,25 @@
                     <th>Precio Unitario</th>
                     <th>Valor de Venta</th>
                 </tr>
+                {% for detalle in detalles %}
                 <tr>
-                    <td>1</td>
-                    <td>Camisa</td>
-                    <td>50.00</td>
-                    <td>50.00</td>
+                    <td>{{ detalle.producto.nombre }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.precio_unitario }}</td>
+                    <td>{{ detalle.cantidad|floatformat:2 }}</td>
                 </tr>
-                <tr>
-                    <td>Son {}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+                {% endfor %}
                 <tr>
                     <td colspan="3" style="text-align: right;">Subtotal:</td>
-                    <td>{}</td>
+                    <td>{{ total_factura }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: right;">IGV:</td>
-                    <td>{}</td>
+                    <td>{{ igv }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: right;">Total S/:</td>
-                    <td>{}</td>
+                    <td>{{ total_con_igv }}</td>
                 </tr>
             </table>
         </div>
@@ -162,11 +187,13 @@
         <div class="footer">
             <p>____________________________________________________</p>
             <h4>CANCELADO</h4>
-            <p>RUC: {}</p>
-            <p>Serie {} del {} al {}</p>
-            <p>Fecha de emisión: {}</p>
-            <p>NRO AUT: {}</p>
+            <p>RUC: 20248454753</p>
+            <p>Fecha de emisión: {{ fecha_actual }}</p>
+            <p>NRO AUT: {{ nro_aut }}</p>
         </div>
     </div>
+    <a href="{% url 'ruc:form' %}">Go Form</a>
+
 </body>
+
 </html>

@@ -11,7 +11,7 @@ class Cliente(models.Model):
     direccion = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f'{self.nombre} {self.apellido}'
+        return self.nombre
 
 # Modelo de Empleado
 class Empleado(models.Model):
@@ -22,7 +22,7 @@ class Empleado(models.Model):
     telefono = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
-        return f'{self.nombre} {self.apellido}'
+        return self.nombre
 
 # Modelo de Categoría
 class Categoria(models.Model):

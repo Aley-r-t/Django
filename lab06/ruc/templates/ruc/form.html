@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-container {
+            margin: 20px auto;
+            width: 80%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .resultado {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 20px auto;
+            width: 95%;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .T {
+            font-size: 40px;
+            font-weight: bold;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 10px;
+            width: 100%;
+        }
+        .ruc_container {
+            text-align: center;
+            padding: 10px;
+            border-left: 1px solid #000;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .add-product-button {
+            background-color: #28a745;
+            color: white;
+            margin-bottom: 15px;
+        }
+    </style>
+    <script>
+        function addProduct() {
+            const container = document.getElementById('productos-container');
+            const newProduct = `
+                <div class="product-entry">
+                    <label for="producto">Selecciona un producto:</label>
+                    <select name="productos[]" required>
+                        {% for producto in productos %}
+                            <option value="{{ producto.id }}">{{ producto.nombre }} - S/{{ producto.precio_unitario }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" name="cantidades[]" min="1" required>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', newProduct);
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Generar PDF</h1>
+        <div class="form-container">
+            <form action="{% url 'ruc:form' %}" method="POST">
+                {% csrf_token %}
+                <label for="empleado">Seleccionar Empleado:</label>
+                <select id="empleado" name="empleado" required>
+                    {% for empleado in empleados %}
+                        <option value="{{ empleado.id }}">{{ empleado.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <label for="cliente">Selecciona un cliente:</label>
+<select id="cliente" name="cliente" required>
+    {% for cliente in clientes %}
+        <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+    {% endfor %}
+</select>
+<div id="productos-container">
+    <!-- Sección para agregar productos -->
+    <div class="product-entry">
+        <label for="producto">Selecciona un producto:</label>
+        <select name="productos[]" required>
+            {% for producto in productos %}
+                <option value="{{ producto.id }}">{{ producto.nombre }} - S/{{ producto.precio }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidades[]" min="1" required>
+    </div>
+</div>
+
+                <button type="button" class="add-product-button" onclick="addProduct()">Añadir otro producto</button>
+
+                <button type="submit">Generar PDF</button>
+            </form>
+        </div>
+
+        {% if subtotal %}
+        <div class="resultado">
+            <h2>Detalles de la Factura</h2>
+            <div class="cabecera">
+                <div class="title"><span class="T">T</span> CONFECCIONES "SAN JORGE"</div>
+                <div class="ruc_container">
+                    <h2>RUC: {{ ruc_cliente }}</h2>
+                    <h1>FACTURA</h1>
+                    <h3>001-{}</h3>
+                </div>
+            </div>
+            <p>Producto: {{ producto.nombre }}</p>
+            <p>Cantidad: {{ cantidad }}</p>
+            <p>Subtotal: S/{{ subtotal }}</p>
+            <p>IGV: S/{{ igv }}</p>
+            <p>Total: S/{{ total }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>____________________________________________________</p>
+        <h4>CANCELADO</h4>
+        <p>RUC: {{ clientes.ruc }} 956874132</p>
+        <p>Serie 7895456 del 1 al 1000</p>
+        <script type="text/javascript">
+            var fecha = new Date();
+            var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            var fecha_actual = fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' del ' + fecha.getFullYear();
+            document.write('<p>Fecha de emisión: ' + fecha_actual + '</p>');
+            var nro_aut = nro_aut + 1;
+        </script>
+        <p>NRO AUT: 45623278</p>
+    </div>
+</body>
+</html>
