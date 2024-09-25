@@ -7,16 +7,20 @@
 </head>
 <body>
     <h1>Login</h1>
-    <form method="post" action="{% url 'ruc:login' %}">
+    {% if error_message %}
+        <p style="color: red;"><strong>{{ error_message }}</strong></p>
+    {% endif %}
+   
+    <form method="POST" action="{% url 'ruc:login_view' %}">
+        {% csrf_token %}
         <label for="username">Username:</label>
         <input type="text" name="username" id="username" required>
         <br>
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required>
         <br>
-        <input type="submit" value="Login">
+        <button type="submit">Login</button>
     </form>
-    <a href="register.php">Register</a>
     
 </body>
 </html>
