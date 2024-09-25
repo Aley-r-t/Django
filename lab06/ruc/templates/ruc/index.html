@@ -10,7 +10,6 @@
     {% if error_message %}
         <p style="color: red;"><strong>{{ error_message }}</strong></p>
     {% endif %}
-   
     <form method="POST" action="{% url 'ruc:login_view' %}">
         {% csrf_token %}
         <label for="username">Username:</label>

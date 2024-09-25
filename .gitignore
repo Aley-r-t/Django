@@ -13,6 +13,10 @@ lab05/tienda/__pycache__/*
 lab05/tienda/migrations/__pycache__/*
 lab05/lab05/__pycache__/*
 lab05/lab05/migrations/__pycache__/*
+lab06/lab06/__pycache__/*
+lab06/lab06/migrations/__pycache__/*
+lab06/ruc/__pycache__/*
+lab06/ruc/migrations/__pycache__/*
 django_crud_api/django_crud_api/__pycache__/*
 django_crud_api/django_crud_api/migrations/__pycache__/*
 django_crud_api/tasks/__pycache__/*
