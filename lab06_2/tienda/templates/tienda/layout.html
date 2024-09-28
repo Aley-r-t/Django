@@ -50,7 +50,7 @@
                 <h1 class="my-4">Shop Name</h1>
                 {% for categoria in categoria_list %}
                 <div class="list-group">
-                    <a href="#" class="list-group-item">{{ categoria.nombre }}</a>
+                    <a href="/tienda/categoria/{{ categoria.nombre }}/" class="list-group-item">{{ categoria.nombre }}</a>
                 </div>
                 {% endfor %}
             </div>

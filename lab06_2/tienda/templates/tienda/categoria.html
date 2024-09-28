@@ -1,0 +1,16 @@
+{% extends "tienda/layout.html" %}
+
+{% block content %}
+<div class="my-4">
+    <h1>Productos en la categoría: {{ categoria.nombre }}</h1>
+    <p>Hay <strong>{{ product_count }}</strong> productos en esta categoría.</p>
+
+    <div class="list-group">
+        {% for producto in product_list %}
+        <a href="#" class="list-group-item list-group-item-action">{{ producto.nombre }}</a>
+        {% empty %}
+        <div class="alert alert-warning" role="alert">No hay productos en esta categoría.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
