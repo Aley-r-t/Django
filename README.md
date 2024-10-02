@@ -14,3 +14,6 @@
   finalmente podra ver el proyecto en el navegador.La ruta a usar muy probablemete "http://127.0.0.1:8000/encuesta/autos/"
 </ul>
 <warnig> Cabe destacar que para que todo lo anterior funcione tiene que tener Python, pip instalado en su computadora...</warnig>
+
+<h2>Django_Crud_api</h2>
+<p>Tiene una api creada que levanta en un puerto y los estilos tienen que poner que se levante en otro puerto</p>
