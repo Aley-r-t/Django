@@ -17,3 +17,9 @@
 
 <h2>Django_Crud_api</h2>
 <p>Tiene una api creada que levanta en un puerto y los estilos tienen que poner que se levante en otro puerto</p>
+
+
+<h2>Correr el lab_07</h2>
+<p>cd lab07</p>
+<p>python manage.py  runserver</p>
+<p>http://localhost:8000</p>
