@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Permisos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        form {
+            display: inline;
+        }
+        select {
+            padding: 5px;
+            margin-right: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Gestionar Permisos</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Permisos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.username }}</td>
+                <td>
+                    <ul>
+                        {% for permiso in usuario.get_all_permissions %}
+                            <li>{{ permiso }}</li>
+                        {% empty %}
+                            <li>No tiene permisos asignados.</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <select name="permiso_id" required>
+                            <option value="">Seleccionar permiso</option>
+                            {% for permiso in permisos %}
+                                <option value="{{ permiso.id }}">{{ permiso.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                        <button type="submit" name="action" value="otorgar">Otorgar Permiso</button>
+                        <button type="submit" name="action" value="revocar">Revocar Permiso</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <a href="{% url 'eventos:index' %}">Volver al inicio</a>
+</body>
+</html>

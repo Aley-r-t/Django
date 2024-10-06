@@ -7,7 +7,8 @@
 </head>
 <body>
     <h2>Hola, {{ user.username }} Welcome al registro de eventos</h2>
-    <a href="">CREAR EVENTOS</a>
+    <a href="{% url 'eventos:crear_evento' %}">CREAR EVENTOS</a>
+    <a href="{% url 'eventos:gestionar_permisos' %}">Listas Permisos de Usuario</a>
     <form>
         <thead></thead>
             <tr>
@@ -40,7 +41,9 @@
             {% endfor %}
         </tbody>
     </form>
-
+    {% if message %}
+    <p><strong>{{ message }}</strong></p>
+    {% endif %}
     <a href="{% url 'eventos:logout' %}">Logout</a>  <!-- Enlace para cerrar sesión -->
 </body>
 </html>

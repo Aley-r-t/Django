@@ -3,41 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Evento</title>
+    <title>{% if accion == 'editar' %}Editar Evento{% else %}Crear Nuevo Evento{% endif %}</title>
 </head>
 <body>
-    <h2>Editar Evento: {{ evento.nombre }}</h2>
-
-<form action="{% url 'actualizar_evento' evento.id %}" method="post">
+    <h2>{% if accion == 'editar' %}Editar Evento: {{ evento.nombre }}{% else %}Crear Nuevo Evento{% endif %}</h2>
+    
+    <form action="{% if accion == 'editar' %}{% url 'eventos:actualizar_evento' evento.id %}{% else %}{% url 'eventos:crear_evento' %}{% endif %}" method="post">
         {% csrf_token %}
         <div>
             <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" value="{{ evento.nombre }}" required>
+            <input type="text" id="nombre" name="nombre" value="{% if evento %}{{ evento.nombre }}{% endif %}" required>
         </div>
         <div>
             <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" required>{{ evento.descripcion }}</textarea>
+            <textarea id="descripcion" name="descripcion" required>{% if evento %}{{ evento.descripcion }}{% endif %}</textarea>
         </div>
         <div>
             <label for="fecha_inicio">Fecha de Inicio:</label>
-            <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" value="{{ evento.fecha_inicio|date:'Y-m-d\TH:i' }}" required>
+            <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" value="{% if evento %}{{ evento.fecha_inicio|date:'Y-m-d\TH:i' }}{% endif %}" required>
         </div>
         <div>
             <label for="fecha_fin">Fecha de Fin:</label>
-            <input type="datetime-local" id="fecha_fin" name="fecha_fin" value="{{ evento.fecha_fin|date:'Y-m-d\TH:i' }}" required>
+            <input type="datetime-local" id="fecha_fin" name="fecha_fin" value="{% if evento %}{{ evento.fecha_fin|date:'Y-m-d\TH:i' }}{% endif %}" required>
         </div>
         <div>
             <label for="ubicacion">Ubicación:</label>
-            <input type="text" id="ubicacion" name="ubicacion" value="{{ evento.ubicacion }}" required>
+            <input type="text" id="ubicacion" name="ubicacion" value="{% if evento %}{{ evento.ubicacion }}{% endif %}" required>
         </div>
         <div>
             <label for="capacidad">Capacidad:</label>
-            <input type="number" id="capacidad" name="capacidad" value="{{ evento.capacidad }}" required>
+            <input type="number" id="capacidad" name="capacidad" value="{% if evento %}{{ evento.capacidad }}{% endif %}" required>
         </div>
         <div>
-            <button type="submit">Guardar Cambios</button>
+            <button type="submit">
+                {% if accion == 'editar' %}Guardar Cambios{% else %}Crear Evento{% endif %}
+            </button>
         </div>
     </form>
 
     <a href="{% url 'eventos:logout' %}">Logout</a> <!-- Enlace para cerrar sesión -->
 </body>
+</html>

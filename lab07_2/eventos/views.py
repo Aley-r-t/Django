@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect ,get_object_or_404
 from django.http import JsonResponse
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from .models import Evento
 from django.contrib.auth.models import Permission,User
@@ -33,7 +34,6 @@ def login_view(request):
     
     return render(request, 'eventos/login.html')
 
-
 def register(request):
     if request.method == 'POST':
         # Recoger datos del formulario usando request.POST
@@ -54,9 +54,8 @@ def register(request):
         user.user_permissions.add(edit_event_permission)
         user.user_permissions.add(delete_event_permission)
         user.user_permissions.add(view_event_permission)
-        
-        return JsonResponse({'message': 'Usuario creado exitosamente'})
-    
+        messages.success(request, 'Te has registrado correctamente incia sesión')
+        return redirect('eventos:login')  # Redirigir al login después de registrarse
     return render(request, 'eventos/register.html')
 
 
@@ -65,21 +64,92 @@ def lista_eventos(request):
     return render(request, 'eventos/lista_eventos.html', {'eventos': eventos})
 
 #Crear eventos
+
 def crear_evento(request):
     if request.method == 'POST':
-        # Recoger datos del formulario usando request.POST
-        nombre = request.POST.get('nombre')
-        descripcion = request.POST.get('descripcion')
-        fecha_inicio = request.POST.get('fecha_inicio')
-        fecha_fin = request.POST.get('fecha_fin')
-        ubicacion = request.POST.get('ubicacion')
-        capacidad = request.POST.get('capacidad')
-        
-        # Crear un nuevo evento
-        evento = Evento.objects.create(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, ubicacion=ubicacion, capacidad=capacidad)
-        
-        return JsonResponse({'message': 'Evento creado exitosamente'})
-    render (request, 'eventos/crud_evento.html')
+        return manejar_crear_evento(request)
+
+    # Si es GET, renderiza el formulario para crear un nuevo evento
+    return render(request, 'eventos/crud_evento.html', {'accion': 'crear'})
+
+def manejar_crear_evento(request):
+    # Recoger datos del formulario usando request.POST
+    nombre = request.POST.get('nombre')
+    descripcion = request.POST.get('descripcion')
+    fecha_inicio = request.POST.get('fecha_inicio')
+    fecha_fin = request.POST.get('fecha_fin')
+    ubicacion = request.POST.get('ubicacion')
+    capacidad = request.POST.get('capacidad')
+
+    # Crear un nuevo evento
+    Evento.objects.create(
+        nombre=nombre,
+        descripcion=descripcion,
+        fecha_inicio=fecha_inicio,
+        fecha_fin=fecha_fin,
+        ubicacion=ubicacion,
+        capacidad=capacidad
+    )
+    messages.success(request, 'Evento creado exitosamente')
+    return redirect('eventos:index')
+
+def actualizar_evento(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    if request.method == 'POST':
+        return manejar_actualizar_evento(request, evento)
+
+    # Si es GET, renderiza el formulario para editar el evento
+    return render(request, 'eventos/crud_evento.html', {'accion': 'editar', 'evento': evento})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)  # Solo permite a los superusuarios acceder
+def gestionar_permisos(request):
+    usuarios = User.objects.all()  # Obtiene todos los usuarios
+    permisos = Permission.objects.all()  # Obtiene todos los permisos
+
+    if request.method == 'POST':
+        # Maneja la asignación o revocación de permisos
+        user_id = request.POST.get('user_id')
+        permiso_id = request.POST.get('permiso_id')
+        action = request.POST.get('action')  # 'otorgar' o 'revocar'
+
+        usuario = User.objects.get(id=user_id)
+        permiso = Permission.objects.get(id=permiso_id)
+
+        if action == 'otorgar':
+            usuario.user_permissions.add(permiso)
+        elif action == 'revocar':
+            usuario.user_permissions.remove(permiso)
+
+        return redirect('eventos:gestionar_permisos')
+
+    return render(request, 'eventos/gestionar_permisos.html', {
+        'usuarios': usuarios,
+        'permisos': permisos,
+    })
+
+def manejar_actualizar_evento(request, evento):
+    # Recoger datos del formulario usando request.POST
+    nombre = request.POST.get('nombre')
+    descripcion = request.POST.get('descripcion')
+    fecha_inicio = request.POST.get('fecha_inicio')
+    fecha_fin = request.POST.get('fecha_fin')
+    ubicacion = request.POST.get('ubicacion')
+    capacidad = request.POST.get('capacidad')
+
+    # Actualizar los campos del evento
+    evento.nombre = nombre
+    evento.descripcion = descripcion
+    evento.fecha_inicio = fecha_inicio
+    evento.fecha_fin = fecha_fin
+    evento.ubicacion = ubicacion
+    evento.capacidad = capacidad
+    evento.save()  # Guardar cambios en el evento existente
+
+    return JsonResponse({'message': 'Evento actualizado exitosamente'})
+#Ultima parte
+
 
 # Vista para cerrar sesión
 def logout_view(request):
