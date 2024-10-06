@@ -23,3 +23,4 @@
 <p>cd lab07</p>
 <p>python manage.py  runserver</p>
 <p>http://localhost:8000</p>
+

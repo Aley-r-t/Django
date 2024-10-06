@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Hola, {{ user.username }} Welcome al registro de eventos</h2>
+    <a href="">CREAR EVENTOS</a>
+    <form>
+        <thead></thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Fecha-inicio</th>
+                <th>Fecha-fin</th>
+                <th>Ubicacion</th>
+                <th>Capacidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evento in eventos %}
+                <tr>
+                    <td>{{ evento.nombre }}</td>
+                    <td>{{ evento.descripcion }}</td>
+                    <td>{{ evento.fecha_inicio }}</td>
+                    <td>{{ evento.fecha_fin }}</td>
+                    <td>
+                        {% if evento.creador == request.user %}
+                            <a href="{% url 'editar_evento' evento.id %}">Editar</a>
+                            <form action="{% url 'eliminar_evento' evento.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </form>
+
+    <a href="{% url 'eventos:logout' %}">Logout</a>  <!-- Enlace para cerrar sesión -->
+</body>
+</html>
