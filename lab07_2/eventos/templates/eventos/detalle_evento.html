@@ -2,22 +2,67 @@
 <html>
 <head>
     <title>{{ evento.nombre }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ evento.nombre }}</h1>
-    <p>Descripción: {{ evento.descripcion }}</p>
-    <p>Fecha y hora de inicio: {{ evento.fecha_inicio }}</p>
-    <p>Fecha y hora de fin: {{ evento.fecha_fin }}</p>
-    <p>Ubicación: {{ evento.ubicacion }}</p>
-    <p>Capacidad máxima: {{ evento.capacidad }}</p>
-    <p>Número de asistentes: {{ numero_asistentes }}</p>
+    <div class="container">
+        <h1>{{ evento.nombre }}</h1>
+        <p>Descripción: {{ evento.descripcion }}</p>
+        <p>Fecha y hora de inicio: {{ evento.fecha_inicio }}</p>
+        <p>Fecha y hora de fin: {{ evento.fecha_fin }}</p>
+        <p>Ubicación: {{ evento.ubicacion }}</p>
+        <p>Capacidad máxima: {{ evento.capacidad }}</p>
+        <p>Número de asistentes: {{ numero_asistentes }}</p>
 
-    {% if not registro %}
-        <a href="{% url 'eventos:confirmar_asistencia' evento.id %}">Confirmar asistencia</a>
-    {% else %}
-        Ya te has registrado para este evento.
-    {% endif %}
+        {% if not registro %}
+            <a href="{% url 'eventos:confirmar_asistencia' evento.id %}" class="button">Confirmar asistencia</a>
+        {% else %}
+            Ya te has registrado para este evento.
+        {% endif %}
 
-    <a href="{% url 'eventos:index' %}">Volver a inicio</a>
+        <a href="{% url 'eventos:index' %}" class="button">Volver a inicio</a>
+    </div>
 </body>
 </html>
