@@ -12,6 +12,7 @@ from django.db.models import Subquery, OuterRef
 from .models import Evento, RegistroEvento
 from django.utils import timezone
 from django.contrib.auth.models import Permission,User
+from django.db.models import Count, Q
 
 # Create your views here.
 
@@ -20,8 +21,11 @@ def index(request):
     # Subquery para obtener el primer registro de cada evento (el creador)
     subquery = RegistroEvento.objects.filter(evento=OuterRef('pk')).order_by('fecha_registro').values('usuario')[:1]
 
-    # Obtener todos los eventos con su primer registro (el creador)
-    eventos = Evento.objects.annotate(creador_usuario=Subquery(subquery))
+    # Anotar el total de asistencias y el creador del evento
+    eventos = Evento.objects.annotate(
+        total_asistencias=Count('registros', filter=Q(registros__asistencia=True)),
+        creador_usuario=Subquery(subquery)  # Subquery para obtener el creador
+    )
 
     eventos_data = []
 
@@ -29,10 +33,11 @@ def index(request):
         # Determinar si el usuario autenticado es el creador del evento
         es_creador = (evento.creador_usuario == request.user.id)
 
-        # Añadir los datos a la lista
+        # Añadir los datos a la lista eventos_data
         eventos_data.append({
             'evento': evento,
-            'es_creador': es_creador
+            'es_creador': es_creador,
+            'total_asistencias': evento.total_asistencias  # Asegurarse de incluir este valor
         })
 
     return render(request, 'eventos/index.html', {'eventos_data': eventos_data})
@@ -220,6 +225,32 @@ def eliminar_evento(request, evento_id):
     else:
         return render(request, 'eventos/index.html')
 
+def confirmar_asistencia(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    registro, created = RegistroEvento.objects.get_or_create(usuario=request.user, evento=evento)
+
+    confirmar = request.GET.get('confirmar')
+    if confirmar == 'True':
+        registro.asistencia = True
+    else:
+        registro.asistencia = False
+
+    registro.save()
+    return redirect('eventos:detalle_evento', evento_id=evento_id)
+    
+def detalle_evento(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    numero_asistentes = obtener_numero_asistentes(evento)
+    # ... otros datos del evento
+    registro = RegistroEvento.objects.filter(usuario=request.user, evento=evento).first()
+    return render(request, 'eventos/detalle_evento.html', {
+        'evento': evento,
+        'numero_asistentes': numero_asistentes,
+        'registro': registro
+    })
+
+def obtener_numero_asistentes(evento):
+    return RegistroEvento.objects.filter(evento=evento, asistencia=True).count()
 # Vista para cerrar sesión
 def logout_view(request):
     logout(request)  # Cierra la sesión del usuario

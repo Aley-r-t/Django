@@ -25,6 +25,7 @@ class Evento(models.Model):
 class RegistroEvento(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='registros')
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='registros')
+    asistencia = models.BooleanField(default=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
