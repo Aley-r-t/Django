@@ -9,7 +9,7 @@ class Evento(models.Model):
     fecha_fin = models.DateTimeField()
     ubicacion = models.CharField(max_length=255)
     capacidad = models.PositiveIntegerField()
-
+    
     class Meta:
         permissions = [
             ("create_eventos", "Puede crear eventos"),

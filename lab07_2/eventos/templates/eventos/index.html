@@ -1,49 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Registro de Eventos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+            background-color: #007BFF;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 7px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #c82333;
+        }
+
+        .success-message {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
 </head>
+
 <body>
-    <h2>Hola, {{ user.username }} Welcome al registro de eventos</h2>
-    <a href="{% url 'eventos:crear_evento' %}">CREAR EVENTOS</a>
-    <a href="{% url 'eventos:gestionar_permisos' %}">Listas Permisos de Usuario</a>
-    <form>
-        <thead></thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Fecha-inicio</th>
-                <th>Fecha-fin</th>
-                <th>Ubicacion</th>
-                <th>Capacidad</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for evento in eventos %}
+    <div class="container">
+        <h2>Hola, {{ user.username }} ¡Bienvenido al registro de eventos!</h2>
+
+        <div class="actions">
+            <a href="{% url 'eventos:crear_evento' %}">Crear Evento</a>
+            <a href="{% url 'eventos:gestionar_permisos' %}">Listar Permisos de Usuario</a>
+        </div>
+
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ evento.nombre }}</td>
-                    <td>{{ evento.descripcion }}</td>
-                    <td>{{ evento.fecha_inicio }}</td>
-                    <td>{{ evento.fecha_fin }}</td>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Inicio</th>
+                    <th>Fecha de Fin</th>
+                    <th>Ubicación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in eventos_data %}
+                <tr>
+                    <td>{{ data.evento.nombre }}</td>
+                    <td>{{ data.evento.descripcion }}</td>
+                    <td>{{ data.evento.fecha_inicio }}</td>
+                    <td>{{ data.evento.fecha_fin }}</td>
+                    <td>{{ data.evento.ubicacion }}</td>
                     <td>
-                        {% if evento.creador == request.user %}
-                            <a href="{% url 'editar_evento' evento.id %}">Editar</a>
-                            <form action="{% url 'eliminar_evento' evento.id %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit">Eliminar</button>
-                            </form>
+                        {% if data.es_creador %}
+                        <a href="{% url 'eventos:actualizar_evento' data.evento.id %}" style="background-color: #28a745;">Editar</a>
+                        <form action="{% url 'eventos:eliminar_evento' data.evento.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">Eliminar</button>
+                        </form>
                         {% endif %}
                     </td>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </form>
-    {% if message %}
-    <p><strong>{{ message }}</strong></p>
-    {% endif %}
-    <a href="{% url 'eventos:logout' %}">Logout</a>  <!-- Enlace para cerrar sesión -->
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if message %}
+        <p class="success-message">{{ message }}</p>
+        {% endif %}
+
+        <a href="{% url 'eventos:logout' %}" style="background-color: #6c757d;">Logout</a>
+    </div>
 </body>
+
 </html>
