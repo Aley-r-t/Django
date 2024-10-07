@@ -134,6 +134,13 @@
             <a href="{% url 'eventos:crear_evento' %}">Crear Evento</a>
             <a href="{% url 'eventos:gestionar_permisos' %}">Listar Permisos de Usuario</a>
         </div>
+        
+        <form method="GET" action="{% url 'eventos:index' %}">
+            <input type="text" name="nombre" placeholder="Buscar por nombre" value="{{ request.GET.nombre }}">
+            <input type="date" name="fecha_inicio" placeholder="Buscar por fecha de inicio" value="{{ request.GET.fecha_inicio }}">
+            <input type="text" name="descripcion" placeholder="Buscar por descripción" value="{{ request.GET.descripcion }}">
+            <button type="submit">Buscar</button>
+        </form>
 
         <table>
             <thead>

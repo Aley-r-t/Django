@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect ,get_object_or_404
-from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_protect
@@ -18,11 +17,29 @@ from django.db.models import Count, Q
 
 @login_required(login_url='eventos:login') 
 def index(request):
+    # Obtener los parámetros de búsqueda desde la solicitud (GET)
+    search_nombre = request.GET.get('nombre', '')
+    search_fecha_inicio = request.GET.get('fecha_inicio', '')
+    search_descripcion = request.GET.get('descripcion', '')
+
     # Subquery para obtener el primer registro de cada evento (el creador)
     subquery = RegistroEvento.objects.filter(evento=OuterRef('pk')).order_by('fecha_registro').values('usuario')[:1]
 
+    # Empezar con todos los eventos
+    eventos = Evento.objects.all()
+
+    # Aplicar los filtros según los parámetros de búsqueda
+    if search_nombre:
+        eventos = eventos.filter(nombre__icontains=search_nombre)
+
+    if search_fecha_inicio:
+        eventos = eventos.filter(fecha_inicio__date=search_fecha_inicio)
+
+    if search_descripcion:
+        eventos = eventos.filter(descripcion__icontains=search_descripcion)
+
     # Anotar el total de asistencias y el creador del evento
-    eventos = Evento.objects.annotate(
+    eventos = eventos.annotate(
         total_asistencias=Count('registros', filter=Q(registros__asistencia=True)),
         creador_usuario=Subquery(subquery)  # Subquery para obtener el creador
     )
@@ -40,7 +57,12 @@ def index(request):
             'total_asistencias': evento.total_asistencias  # Asegurarse de incluir este valor
         })
 
-    return render(request, 'eventos/index.html', {'eventos_data': eventos_data})
+    return render(request, 'eventos/index.html', {
+        'eventos_data': eventos_data,
+        'search_nombre': search_nombre,
+        'search_fecha_inicio': search_fecha_inicio,
+        'search_descripcion': search_descripcion,
+    })
 
 @csrf_protect
 def login_view(request):
