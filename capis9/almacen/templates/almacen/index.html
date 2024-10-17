@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumo de API en Vista</title>
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind CDN -->
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center my-8 text-blue-600">Lista de Categorías</h1>
+
+        {% if error %}
+        <div class="bg-red-100 text-red-700 border border-red-400 p-4 rounded-lg mb-4">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Formulario para agregar nueva categoría -->
+        <form method="POST" class="mb-6">
+            {% csrf_token %}
+            <div class="flex items-center space-x-4">
+                <input type="text" name="name" placeholder="Nombre de la categoría" required
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    Agregar Categoría
+                </button>
+            </div>
+        </form>
+
+        <!-- Tabla de categorías -->
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Nombre</th>
+                        <th class="py-3 px-6 text-left">Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm font-light">
+                    {% for categoria in categorias %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50 transition">
+                        <td class="py-3 px-6">{{ categoria.id }}</td>
+                        <td class="py-3 px-6">{{ categoria.name }}</td>
+                        
+                        <td>
+                            <form method="POST" action="{% url 'categoria_detail' categoria.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="_method" value="DELETE"> <!-- Simulación DELETE -->
+                                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

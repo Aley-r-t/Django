@@ -1,0 +1,26 @@
+{% extends 'desarrollo/base.html' %}
+
+{% block title %}
+Lista de Cursos
+{% endblock %}
+
+{% block content %}
+    <!-- Call to Action-->
+    <div class="card text-white bg-secondary my-5 py-4 text-center">
+        <div class="card-body"><p class="text-white m-0">Lista de Cursos</p></div>
+    </div>
+    <!-- Content Row-->
+    <div class="row gx-4 gx-lg-5">
+        {% for curso in cursos %}
+            <div class="col-md-4 mb-5">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ curso.titulo }}</h2>
+                        <p class="card-text">{{ curso.descripcion }}</p>
+                        <p class="card-text">{{ curso.semestre.nombre }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

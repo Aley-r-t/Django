@@ -5,197 +5,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Eventos</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-
-        h2 {
-            color: #343a40;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        a {
-            text-decoration: none;
-            color: white;
-            background-color: #007bff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        a:hover {
-            background-color: #0056b3;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        th {
-            background-color: #007bff;
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        td {
-            font-size: 14px;
-        }
-
-        button {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #c82333;
-        }
-
-        .success-message {
-            color: #28a745;
-            font-weight: bold;
-            margin-top: 20px;
-            font-size: 16px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .actions {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .actions a {
-            font-size: 14px;
-        }
-
-        .actions a:last-child {
-            background-color: #6c757d;
-        }
-
-        .actions a:last-child:hover {
-            background-color: #5a6268;
-        }
-
-        .logout-link {
-            margin-top: 20px;
-            display: inline-block;
-            background-color: #6c757d;
-            padding: 8px 15px;
-            color: white;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .logout-link:hover {
-            background-color: #5a6268;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <div class="container">
-        <h2>Hola, {{ user.username }} ¡Bienvenido al registro de eventos!</h2>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Hola, {{ user.username }} ¡Bienvenido al registro de eventos!</h2>
 
-        <div class="actions">
-            <a href="{% url 'eventos:crear_evento' %}">Crear Evento</a>
-            <a href="{% url 'eventos:gestionar_permisos' %}">Listar Permisos de Usuario</a>
+        <div class="flex space-x-4 mb-6">
+            <a href="{% url 'eventos:crear_evento' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">Crear Evento</a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'eventos:gestionar_permisos' %}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition duration-300">Listar Permisos de Usuario</a>
+            {% endif %}
         </div>
-        
-        <form method="GET" action="{% url 'eventos:index' %}">
-            <input type="text" name="nombre" placeholder="Buscar por nombre" value="{{ request.GET.nombre }}">
-            <input type="date" name="fecha_inicio" placeholder="Buscar por fecha de inicio" value="{{ request.GET.fecha_inicio }}">
-            <input type="text" name="descripcion" placeholder="Buscar por descripción" value="{{ request.GET.descripcion }}">
-            <button type="submit">Buscar</button>
+
+        <form method="GET" action="{% url 'eventos:index' %}" class="space-y-4 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input type="text" name="nombre" placeholder="Buscar por nombre" value="{{ request.GET.nombre }}" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <input type="text" name="fecha_inicio" placeholder="Buscar por fecha de inicio" value="{{ request.GET.fecha_inicio }}" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <input type="text" name="descripcion" placeholder="Buscar por descripción" value="{{ request.GET.descripcion }}" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+               
+            </div>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">Buscar</button>
         </form>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Fecha de Inicio</th>
-                    <th>Fecha de Fin</th>
-                    <th>Ubicación</th>
-                    <th>Total asistencias</th>
-                    <th>Asistencia</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for data in eventos_data %}
-                <tr>
-                    <td>{{ data.evento.nombre }}</td>
-                    <td>{{ data.evento.descripcion }}</td>
-                    <td>{{ data.evento.fecha_inicio }}</td>
-                    <td>{{ data.evento.fecha_fin }}</td>
-                    <td>{{ data.evento.ubicacion }}</td>
-                    <td>{{ data.total_asistencias }}</td>
-                    <td>
-                        {% if registro and registro.asistencia %}
-                        <a href="{% url 'eventos:confirmar_asistencia' data.evento.id %}?confirmar=False"
-                            style="background-color: #ffc107; color: #343a40;">Cancelar Asistencia</a>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for data in eventos_data %}
+            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                <h3 class="text-xl font-semibold mb-2">{{ data.evento.nombre }}</h3>
+                <p class="text-gray-600 mb-4">{{ data.evento.descripcion }}</p>
+                <p class="text-gray-600">Fecha Inicio: <span class="font-semibold">{{ data.evento.fecha_inicio }}</span></p>
+                <p class="text-gray-600">Fecha Fin: <span class="font-semibold">{{ data.evento.fecha_fin }}</span></p>
+                <p class="text-gray-600">Ubicación: <span class="font-semibold">{{ data.evento.ubicacion }}</span></p>
+                <p class="text-gray-600 mb-4">Total asistencias: <span class="font-semibold">{{ data.total_asistencias }}</span></p>
+
+                <div class="flex justify-between items-center">
+                    <div>
+                        {% if data.registro and data.registro.asistencia %}
+                        <a href="{% url 'eventos:confirmar_asistencia' data.evento.id %}?confirmar=False" class="bg-yellow-500 text-gray-800 px-4 py-2 rounded hover:bg-yellow-600 transition duration-300">Cancelar</a>
                         {% else %}
-                        <a href="{% url 'eventos:confirmar_asistencia' data.evento.id %}?confirmar=True">Confirmar
-                            Asistencia</a>
+                        <a href="{% url 'eventos:confirmar_asistencia' data.evento.id %}?confirmar=True" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Asistiré</a>
                         {% endif %}
-                    </td>
-                    <td>
-                        {% if data.es_creador %}
-                        <a href="{% url 'eventos:actualizar_evento' data.evento.id %}"
-                            style="background-color: #28a745;">Editar</a>
-                        <form action="{% url 'eventos:eliminar_evento' data.evento.id %}" method="post"
-                            style="display:inline;">
+                    </div>
+
+                    <div class="space-x-2">
+                        {% if data.puede_modificar %}
+                        <a href="{% url 'eventos:actualizar_evento' data.evento.id %}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Editar</a>
+                        <form action="{% url 'eventos:eliminar_evento' data.evento.id %}" method="post" class="inline">
                             {% csrf_token %}
-                            <button type="submit">Eliminar</button>
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300">Eliminar</button>
                         </form>
                         {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
         {% if message %}
-        <p class="success-message">{{ message }}</p>
+        <p class="text-green-600 font-semibold mt-4">{{ message }}</p>
         {% endif %}
 
-        <a href="{% url 'eventos:logout' %}" class="logout-link">Logout</a>
+        <a href="{% url 'eventos:logout' %}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition duration-300 mt-6 inline-block">Logout</a>
     </div>
-
 </body>
 
 </html>

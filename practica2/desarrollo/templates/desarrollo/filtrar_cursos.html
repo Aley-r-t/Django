@@ -1,0 +1,48 @@
+{% extends 'desarrollo/base.html' %}
+
+{% block title %}
+Filtrar Cursos
+{% endblock %}
+
+{% block content %}
+    <div class="card text-white bg-secondary my-5 py-4 text-center">
+        <div class="card-body">
+            <p class="text-white m-0">Filtrar Cursos por Semestre</p>
+        </div>
+    </div>
+
+    <!-- Formulario para seleccionar el semestre -->
+    <form method="get" class="mb-4">
+        <div class="mb-3">
+            <label for="semestre" class="form-label">Seleccione un Semestre:</label>
+            <select name="semestre" id="semestre" class="form-select">
+                <option value="">--Seleccione--</option>
+                {% for semestre in semestres %}
+                    <option value="{{ semestre.id }}" {% if semestre.id|stringformat:"s" == semestre_seleccionado %}selected{% endif %}>
+                        {{ semestre.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+
+    <!-- Lista de Cursos -->
+    <div class="row gx-4 gx-lg-5">
+        {% for curso in cursos %}
+            <div class="col-md-4 mb-5">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ curso.titulo }}</h2>
+                        <p class="card-text">{{ curso.descripcion }}</p>
+                        <p class="card-text">{{ curso.semestre.nombre }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-md-12">
+                <p>No hay cursos disponibles para el semestre seleccionado.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center my-8 text-green-600">Lista de Productos</h1>
+
+        {% if error %}
+        <div class="bg-red-100 text-red-700 border border-red-400 p-4 rounded-lg mb-4">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Formulario para filtros de búsqueda -->
+        <div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
+            <input type="text" id="nombreFiltro" placeholder="Buscar por nombre"
+                   class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+            
+            <select id="categoriaFiltro" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                <option value="">Filtrar por categoría</option>
+                {% for cat in categorias %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+
+            <button onclick="aplicarFiltros()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                Filtrar
+            </button>
+        </div>
+
+        <!-- Formulario para agregar o editar producto -->
+        <form method="POST" class="mb-6">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ producto.id|default:'' }}">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" name="nombre" placeholder="Nombre del producto" value="{{ producto.nombre|default:'' }}" required
+                    class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                
+                <input type="date" name="fecha_de_ingreso" placeholder="Fecha de ingreso" value="{{ producto.fecha_de_ingreso|default:'' }}" required
+                    class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                
+                <input type="number" name="cantidad_en_stock" placeholder="Cantidad en stock" value="{{ producto.cantidad_en_stock|default:0 }}" required
+                    class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                
+                <input type="number" step="0.01" name="precio" placeholder="Precio" value="{{ producto.precio|default:'' }}" required
+                    class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                
+                <select name="categoria" required class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                    <option value="">Seleccionar categoría</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if producto.categoria == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="proveedor" required class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                    <option value="">Seleccionar proveedor</option>
+                    {% for prov in proveedores %}
+                        <option value="{{ prov.id }}" {% if producto.proveedor == prov.id %}selected{% endif %}>{{ prov.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition mt-4">
+                {% if producto.id %}Actualizar{% else %}Agregar{% endif %} Producto
+            </button>
+        </form>
+
+        <!-- Tabla de productos -->
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Nombre</th>
+                        <th class="py-3 px-6 text-left">Fecha de Ingreso</th>
+                        <th class="py-3 px-6 text-left">Cantidad</th>
+                        <th class="py-3 px-6 text-left">Precio</th>
+                        <th class="py-3 px-6 text-left">Categoría</th>
+                        <th class="py-3 px-6 text-left">Proveedor</th>
+                        <th class="py-3 px-6 text-left">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productosTabla" class="text-gray-700 text-sm font-light">
+                    {% for producto in productos %}
+                    <tr class="producto-item border-b border-gray-200 hover:bg-gray-50 transition" 
+                        data-nombre="{{ producto.nombre }}" data-categoria="{{ producto.categoria }}">
+                        <td class="py-3 px-6">{{ producto.id }}</td>
+                        <td class="py-3 px-6">{{ producto.nombre }}</td>
+                        <td class="py-3 px-6">{{ producto.fecha_de_ingreso }}</td>
+                        <td class="py-3 px-6">{{ producto.cantidad_en_stock }}</td>
+                        <td class="py-3 px-6">{{ producto.precio }}</td>
+                        <td class="py-3 px-6">
+                            {% for cat in categorias %}
+                                {% if cat.id == producto.categoria %}{{ cat.name }}{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td class="py-3 px-6">
+                            {% for prov in proveedores %}
+                                {% if prov.id == producto.proveedor %}{{ prov.name }}{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td class="flex space-x-2">
+                            <a href="{% url 'producto_detail' producto.id %}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">
+                                Editar
+                            </a>
+                            <form method="POST" action="{% url 'producto_detail' producto.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function aplicarFiltros() {
+            
+            const nombreFiltro = document.getElementById('nombreFiltro').value.toLowerCase();
+            const categoriaFiltro = document.getElementById('categoriaFiltro').value;
+
+            const productos = document.querySelectorAll('.producto-item');
+
+            productos.forEach(producto => {
+                const nombreProducto = producto.getAttribute('data-nombre').toLowerCase();
+                const categoriaProducto = producto.getAttribute('data-categoria');
+
+                const coincideNombre = nombreProducto.includes(nombreFiltro);
+                const coincideCategoria = !categoriaFiltro || categoriaProducto === categoriaFiltro;
+
+                if (coincideNombre && coincideCategoria) {
+                    producto.style.display = '';
+                } else {
+                    producto.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

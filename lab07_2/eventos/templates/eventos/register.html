@@ -5,96 +5,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <style>
-        /* Estilos generales */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        section {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: url('https://wallpaperaccess.com/full/2314950.jpg') no-repeat center center/cover;
         }
 
-        /* Estilo para el contenedor del formulario */
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+        .container {
+            position: relative;
+            width: 400px;
+            border: 2px solid rgba(255, 255, 255, .6);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            height: 550px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container h2 {
+            font-size: 2.3rem;
+            color: #fff;
             text-align: center;
-        }
-
-        /* Título */
-        h1 {
-            font-size: 24px;
             margin-bottom: 20px;
-            color: #333;
         }
 
-        /* Mensaje de error */
-        p {
-            margin: 10px 0;
-            color: red;
+        .input-contenedor {
+            display: flex;
+            position: relative;
+            margin: 20px 0;
+            width: 300px;
+            border-bottom: 2px solid #fff;
         }
 
-        /* Etiquetas y campos de texto */
-        label {
-            display: block;
-            margin-bottom: 8px;
+        .input-contenedor label {
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #fff;
+            pointer-events: none;
+            transition: .6s;
             font-weight: bold;
-            text-align: left;
         }
 
-        input[type="text"], input[type="password"] {
+        input:focus~label,
+        input:valid~label {
+            top: -5px;
+        }
+
+        .input-contenedor input {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        /* Botón de envío */
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
+            height: 50px;
+            background-color: transparent;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            outline: none;
+            font-size: 1rem;
+            color: #fff;
+            padding: 5px 0;
+        }
+
+        .input-contenedor .svg {
+            position: absolute;
+            right: 8px;
+            top: 19px;
+            color: #fff;
+            font-size: 1.6rem;
+        }
+
+        .olvidar {
+            margin: -15px 0 15px;
+            font-size: .9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+        }
+
+        .olvidar label input {
+            margin: 3px;
+        }
+
+        button {
             width: 100%;
-            font-size: 16px;
+            height: 50px;
+            border-radius: 40px;
+            background-color: #fff;
+            border: none;
+            font-weight: bold;
+            outline: none;
+            color: #000;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: .4s;
         }
 
         button:hover {
-            background-color: #218838;
+            opacity: .9;
         }
 
-        /* Responsivo para pantallas pequeñas */
-        @media (max-width: 400px) {
-            form {
-                width: 100%;
-                padding: 15px;
-            }
+        .registrar {
+            margin: 20px 0;
+            text-align: center;
+            font-size: .9em;
+            color: #fff;
+        }
+
+        .registrar p a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: .3s;
+        }
+
+        .registrar p a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <form method="POST" action="">
-        <h1>Login</h1>
-        {% if error_message %}
-            <p><strong>{{ error_message }}</strong></p>
-        {% endif %}
-        {% csrf_token %}
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
-        
-        <button type="submit">Register</button>
-    </form>
+    <section>
+        <div class="container">
+            <h2>Register</h2>
+            <form method="POST">
+                {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if error_message %}
+                <p><strong>{{ error_message }}</strong></p>
+                {% endif %}
+                {% csrf_token %}
+
+                <div class="input-contenedor">
+                    <input type="text" name="username" id="username" required>
+                    <label for="username">Username</label>
+                    <div class="svg">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                            <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-contenedor">
+                    <input type="password" name="password" id="password" required>
+                    <label for="password">Password</label>
+                    <div class="svg">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                            <path d="M144 144l0 48 160 0 0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192l0-48C80 64.5 144.5 0 224 0s144 64.5 144 144l0 48 16 0c35.3 0 64 28.7 64 64l0 192c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 256c0-35.3 28.7-64 64-64l16 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="olvidar">
+                    <label for="remember">
+                        <input type="checkbox" name="remember"> Recordar
+                    </label>
+                    <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit">Acceder</button>
+                <div class="registrar">
+                    <p>¿Ya tienes cuenta? <a href="/login">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </section>
+
+
+
+
+
 </body>
 </html>

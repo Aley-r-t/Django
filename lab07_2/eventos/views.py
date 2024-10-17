@@ -21,6 +21,7 @@ def index(request):
     search_nombre = request.GET.get('nombre', '')
     search_fecha_inicio = request.GET.get('fecha_inicio', '')
     search_descripcion = request.GET.get('descripcion', '')
+    asistencia_confirmada = request.GET.get('confirmada', '')
 
     # Subquery para obtener el primer registro de cada evento (el creador)
     subquery = RegistroEvento.objects.filter(evento=OuterRef('pk')).order_by('fecha_registro').values('usuario')[:1]
@@ -38,6 +39,10 @@ def index(request):
     if search_descripcion:
         eventos = eventos.filter(descripcion__icontains=search_descripcion)
 
+    # Filtrar eventos con asistencia confirmada si se selecciona el checkbox
+    if asistencia_confirmada:
+        eventos = eventos.filter(registros__asistencia=True)
+
     # Anotar el total de asistencias y el creador del evento
     eventos = eventos.annotate(
         total_asistencias=Count('registros', filter=Q(registros__asistencia=True)),
@@ -50,11 +55,19 @@ def index(request):
         # Determinar si el usuario autenticado es el creador del evento
         es_creador = (evento.creador_usuario == request.user.id)
 
+        # Verificar si el usuario es administrador o superusuario
+        puede_modificar = request.user.is_staff or request.user.is_superuser or es_creador
+
+        # Obtener el registro del evento si el usuario ya está registrado
+        registro = RegistroEvento.objects.filter(evento=evento, usuario=request.user).first()
+
         # Añadir los datos a la lista eventos_data
         eventos_data.append({
             'evento': evento,
             'es_creador': es_creador,
-            'total_asistencias': evento.total_asistencias  # Asegurarse de incluir este valor
+            'puede_modificar': puede_modificar,  # Verificar si puede modificar o eliminar el evento
+            'total_asistencias': evento.total_asistencias,  # Incluir el total de asistencias
+            'registro': registro,  # Incluir el registro del usuario en el evento (si existe)
         })
 
     return render(request, 'eventos/index.html', {
@@ -62,6 +75,7 @@ def index(request):
         'search_nombre': search_nombre,
         'search_fecha_inicio': search_fecha_inicio,
         'search_descripcion': search_descripcion,
+        'asistencia_confirmada': asistencia_confirmada,  # Para mantener el estado del checkbox
     })
 
 @csrf_protect
@@ -108,6 +122,7 @@ def register(request):
     return render(request, 'eventos/register.html')
 
 #Crear eventos
+@login_required(login_url='eventos:login')
 def crear_evento(request):
     if request.method == 'POST': 
         return manejar_crear_evento(request)
@@ -186,18 +201,25 @@ def gestionar_permisos(request):
     permisos = Permission.objects.all()  # Obtiene todos los permisos
 
     if request.method == 'POST':
-        # Maneja la asignación o revocación de permisos
+        # Maneja la asignación, revocación de permisos o eliminación de usuarios
         user_id = request.POST.get('user_id')
         permiso_id = request.POST.get('permiso_id')
-        action = request.POST.get('action')  # 'otorgar' o 'revocar'
+        action = request.POST.get('action')  # 'otorgar', 'revocar', 'eliminar'
 
         usuario = User.objects.get(id=user_id)
-        permiso = Permission.objects.get(id=permiso_id)
 
         if action == 'otorgar':
+            permiso = Permission.objects.get(id=permiso_id)
             usuario.user_permissions.add(permiso)
+
         elif action == 'revocar':
+            permiso = Permission.objects.get(id=permiso_id)
             usuario.user_permissions.remove(permiso)
+
+        elif action == 'eliminar':
+            # Elimina al usuario solo si es superusuario
+            if request.user.is_superuser:
+                usuario.delete()
 
         return redirect('eventos:gestionar_permisos')
 
@@ -247,6 +269,7 @@ def eliminar_evento(request, evento_id):
     else:
         return render(request, 'eventos/index.html')
 
+@login_required(login_url='eventos:login')
 def confirmar_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     registro, created = RegistroEvento.objects.get_or_create(usuario=request.user, evento=evento)
@@ -259,7 +282,8 @@ def confirmar_asistencia(request, evento_id):
 
     registro.save()
     return redirect('eventos:detalle_evento', evento_id=evento_id)
-    
+
+@login_required(login_url='eventos:login')    
 def detalle_evento(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     numero_asistentes = obtener_numero_asistentes(evento)

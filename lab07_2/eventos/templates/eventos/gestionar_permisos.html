@@ -61,6 +61,13 @@
         a:hover {
             text-decoration: underline;
         }
+        .delete-btn {
+            background-color: #dc3545;
+            margin-left: 5px;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -99,6 +106,13 @@
                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
                         <button type="submit" name="action" value="otorgar">Otorgar Permiso</button>
                         <button type="submit" name="action" value="revocar">Revocar Permiso</button>
+                    </form>
+
+                    <!-- Botón de eliminar solo disponible para el superusuario -->
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                        <button type="submit" name="action" value="eliminar" class="delete-btn">Eliminar Usuario</button>
                     </form>
                 </td>
             </tr>

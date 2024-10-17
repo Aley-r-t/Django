@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Proveedores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center my-8 text-blue-600">Lista de Proveedores</h1>
+
+        {% if error %}
+        <div class="bg-red-100 text-red-700 border border-red-400 p-4 rounded-lg mb-4">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Formulario para agregar o editar proveedor -->
+        <form method="POST" class="mb-6">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ proveedor.id|default:'' }}">
+            <div class="flex items-center space-x-4">
+                <input type="text" name="name" placeholder="Nombre del proveedor" value="{{ proveedor.name|default:'' }}" required
+                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                <input type="text" name="contact_info" placeholder="Información de contacto" value="{{ proveedor.contact_info|default:'' }}" required
+                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    {% if proveedor.id %}Actualizar{% else %}Agregar{% endif %} Proveedor
+                </button>
+            </div>
+        </form>
+        <!-- Tabla de proveedores -->
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Nombre</th>
+                        <th class="py-3 px-6 text-left">Información de Contacto</th>
+                        <th class="py-3 px-6 text-left">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm font-light">
+                    {% for proveedor in proveedores %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50 transition">
+                        <td class="py-3 px-6">{{ proveedor.id }}</td>
+                        <td class="py-3 px-6">{{ proveedor.name }}</td>
+                        <td class="py-3 px-6">{{ proveedor.contact_info }}</td>
+                        <td class="flex space-x-2">
+                            <!-- Formulario para editar -->
+                            <a href="{% url 'provedor_detail' proveedor.id %}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">
+                                Editar
+                            </a>
+                            <!-- Formulario para eliminar -->
+                            <form method="POST" action="{% url 'provedor_detail' proveedor.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
