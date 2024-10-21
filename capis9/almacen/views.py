@@ -6,7 +6,7 @@ from django.http import JsonResponse
 # Create your views here.
 
 class CategoriaListView(View):
-    template_name = 'almacen/index.html'  # Plantilla para mostrar/crear/eliminar categorías
+    template_name = 'almacen/index.html'  
 
     
     def get(self, request, *args, **kwargs):
@@ -33,57 +33,55 @@ class CategoriaListView(View):
         url = f"https://lab08-bpvy.onrender.com/categorias/{categoria_id}/"
         try:
             response = requests.get(url)
-            response.raise_for_status()  # Verifica que no haya errores
-            categoria = response.json()  # Obtiene los datos JSON
+            response.raise_for_status()  
+            categoria = response.json() 
         except requests.exceptions.RequestException as e:
             return JsonResponse({"error": "Error al obtener datos del endpoint", "details": str(e)}, status=500)
 
         return render(request, self.template_name, {'categoria': categoria})
 
-    # Método POST para crear o eliminar categorías
     def post(self, request, *args, **kwargs):
-        categoria_id = kwargs.get('categoria_id')  # Obtener el ID de la categoría desde kwargs
-        method = request.POST.get('_method', '').upper()  # Detectar si es un DELETE simulado
+        categoria_id = kwargs.get('categoria_id')  
+        method = request.POST.get('_method', '').upper() 
 
         if method == 'DELETE':
-            return self.post_delete(request, categoria_id)  # Llama a la función para eliminar
+            return self.post_delete(request, categoria_id)  
         else:
-            return self.post_create(request)  # Llama a la función para crear
+            return self.post_create(request) 
 
     def post_create(self, request):
-        url = "https://lab08-bpvy.onrender.com/categorias/"  # URL para crear nuevas categorías
+        url = "https://lab08-bpvy.onrender.com/categorias/"
         name = request.POST.get('name')  
 
         if not name:
-            return self.get_categorias(request)  # Devuelve las categorías con error
+            return self.get_categorias(request) 
 
         data = {
             'name': name
         }
 
         try:
-            # Envía los datos a la API
+           
             response = requests.post(url, json=data)
-            response.raise_for_status()  # Verifica si la solicitud fue exitosa
+            response.raise_for_status()  
         except requests.exceptions.RequestException as e:
-            return self.get_categorias(request)  # Devuelve las categorías con error
+            return self.get_categorias(request) 
 
-        # Después de un POST exitoso, vuelve a renderizar la página con los datos actualizados
         return self.get_categorias(request)
 
     def post_delete(self, request, categoria_id):
-        url = f"https://lab08-bpvy.onrender.com/categorias/{categoria_id}/"  # URL para eliminar categoría
+        url = f"https://lab08-bpvy.onrender.com/categorias/{categoria_id}/" 
         try:
             response = requests.delete(url)
-            response.raise_for_status()  # Verifica si la solicitud fue exitosa
-            return redirect('index')  # Redirige a la vista donde se listan las categorías
+            response.raise_for_status()  
+            return redirect('index')  
         except requests.exceptions.RequestException as e:
-            return self.get_categorias(request)  # Devuelve las categorías con error
+            return self.get_categorias(request) 
         
 class ProveedoresListView(View):
     template_name = 'almacen/provedores.html' 
 
-    # Método GET para obtener proveedores o un proveedor específico
+   
     def get(self, request, *args, **kwargs):
         proveedor_id = kwargs.get('proveedor_id')
         if proveedor_id:  
