@@ -1,39 +1,31 @@
 # Laboratorios de Django
 
-Este proyecto incluye varios laboratorios relacionados con Django. Para que funcione correctamente, es necesario activar el entorno virtual y utilizar SQLite3 como base de datos.
+Este proyecto contiene múltiples laboratorios diseñados para ayudar a los desarrolladores a comprender y practicar el uso de Django, un potente framework de desarrollo web en Python. Los laboratorios incluyen ejemplos prácticos y ejercicios para profundizar en la creación de aplicaciones web con funcionalidades esenciales.
 
 ## Requisitos Previos
 
-Antes de comenzar, asegúrate de tener instalado:
-- **Python**
-- **pip**
+Antes de ejecutar el proyecto, asegúrate de tener lo siguiente instalado en tu sistema:
+- **Python 3.x**: Requerido para ejecutar Django.
+- **pip**: Gestor de paquetes de Python para instalar dependencias.
 
-## Pasos para la Ejecución del Proyecto
+## Instalación y Configuración
 
-Sigue los pasos a continuación para poner en marcha el proyecto:
+Sigue los pasos detallados a continuación para poner en marcha el proyecto:
 
-1. Crear el entorno virtual en una carpeta con el siguiente comando:
-   ```bash
-   python -m venv myvenv
+### 1. Crear un entorno virtual
+Se recomienda el uso de un entorno virtual para mantener aisladas las dependencias del proyecto y evitar conflictos con otras aplicaciones.
 
-2. En windos
-   ```bash
-   myvenv\Scripts\activate
+Ejecuta el siguiente comando para crear un entorno virtual llamado `myvenv`:
 
-3. En linux o mac
-  ```bash
-  source myvenv/bin/activate
-
-4. Instalar Django
-
-    pip install django
-
-  navegar al directorio del proyecto
-   cd[nombre del proyecto]
-
-    Ejecutarlo  
-    python manage.py runserver
-
-  
+```bash
+python -m venv myvenv
 
 
+
+
+## 2. Activar el entorno virtual
+Dependiendo del sistema operativo, activa el entorno virtual con uno de los siguientes comandos:
+
+**Windows**:
+```bash
+myvenv\Scripts\activate
